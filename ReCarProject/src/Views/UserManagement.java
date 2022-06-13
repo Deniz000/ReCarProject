@@ -1,13 +1,17 @@
 package Views;
 
 import Model.Car;
+import Model.City;
+import Model.Company;
 import Model.User;
 import com.carRental.Helper.Config;
 import com.carRental.Helper.Helper;
+import com.carRental.Helper.Item;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class UserManagement extends JFrame{
     private JPanel wrapper;
@@ -27,138 +31,113 @@ public class UserManagement extends JFrame{
     private JLabel lbl_city;
     private JLabel lbl_carType;
     private JLabel lbl_price;
+    private JRadioButton radioBtnAvailable;
+    private JTextField txtMaxPrice;
+    private JButton btnTemizle;
+    private JButton çıkışYapButton;
+    private JComboBox comboBox1;
+    private JComboBox comboBox2;
+    private JTextField textField1;
+    private JComboBox comboBox3;
+    private JComboBox comboBox4;
+    private JTextField textField2;
     private DefaultTableModel mdl_userCarlist;
     private DefaultTableModel mdl_rentedCarList;
-    private Object[] row_userCarList;
-    private Object[] row_rentedCarList;
+
+
+
+    Object[] col_userCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"}; //sortCar() metodunda ulaşabilmek için burada tanımladım
+    private Object[] row_userCarList = new Object[col_userCarList.length];
+
+    Object[] col_rentedCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"};
 
     private User user;
 
-    public UserManagement(User user){
+    public UserManagement(User user) {
         add(wrapper);
-        setSize(800,500);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle(Config.PROJECT_TİTLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        lbl_welcome.setText("Hoşgeldin "+ user.getUsername());
+        lbl_welcome.setText("Hoşgeldin " + user.getUsername());
         //Model userCarlist
         mdl_userCarlist = new DefaultTableModel();
-        Object[] col_userCarList = {"ID","Şehir","Araç Tipi","Müsaitlik Durumu","Fiyat"};
         mdl_userCarlist.setColumnIdentifiers(col_userCarList);
 
         tbl_carList.setModel(mdl_userCarlist);
         tbl_carList.getTableHeader().setReorderingAllowed(false); // yeniden sıralanabilirlik
-        row_userCarList = new Object[col_userCarList.length];
-
+        sortCars();
 
         mdl_rentedCarList = new DefaultTableModel();
-        Object[] col_rentedCarList = {"ID","Şehir","Araç Tipi","Müsaitlik Durumu","Fiyat"};
         mdl_rentedCarList.setColumnIdentifiers(col_rentedCarList);
 
         tbl_rentedCarList.setModel(mdl_rentedCarList);
         tbl_rentedCarList.getTableHeader().setReorderingAllowed(false); // yeniden sıralanabilirlik
-        row_rentedCarList = new Object[col_userCarList.length];
-
+        comboSortCity();
 
         // Veritabanında kayıtlı araçların araçlar sekmesindeki tabloda listelenmesi
-        for(Car obj : Car.getCarList()){
-            Object[] row = new Object[col_userCarList.length];
-            row[0] = obj.getId();
-            row[1] = obj.getCity();
-            row[2] = obj.getCarType();
-            row[3] = obj.isAvailable();
-            row[4] = obj.getPrice();
-            mdl_userCarlist.addRow(row);
-
-
-        }
 
 
 
-        txt_dateStart.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                txt_dateStart.setText("");
-            }
-        });
-        txt_dateEnd.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                txt_dateEnd.setText("");
-            }
-        });
 
         // şehir ve araç tipine göre tabloda listelenecek araçların filtrelenmesi
-        araButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel clearModel = (DefaultTableModel) tbl_carList.getModel();
-                clearModel.setRowCount(0);
-                for(Car obj : Car.getCarList()){
-                    int i =0;
-                    row_userCarList[i++] = obj.getId();
-                    row_userCarList[i++] = obj.getCity();
-                    row_userCarList[i++] = obj.getCarType();
-                    row_userCarList[i++] = obj.isAvailable();
-                    row_userCarList[i++] = obj.getPrice();
-                    if(cmb_city.getSelectedItem().equals(row_userCarList[1]) && cmb_carType.getSelectedItem().equals(row_userCarList[2])){
-                        mdl_userCarlist.addRow(row_userCarList);
-                    }
-
+        araButton.addActionListener(e -> {
+                //String city = cmb_city.getSelectedItem().toString();
+                int cityId = cmb_city.getSelectedIndex() + 1;
+                String carType = cmb_carType.getSelectedItem().toString();
+                int maxPrice = Integer.parseInt(txtMaxPrice.getText());
+                boolean isSelect = radioBtnAvailable.isSelected();
+                String sql = null;
+                if(maxPrice==0){
+                 //   sql = Car.searchQuery(cityId, carType,isSelect);
+                    sortCars(Car.sortFilter(cityId,carType,isSelect));
                 }
-            }
+                else {
+                    sortCars(Car.sortFilterForPrice(cityId, carType,maxPrice,isSelect));
+                }
         });
+
 
         txt_kullaniciAdi.setText(user.getUsername());
         txt_parola.setText(user.getPassword());
 
         // kullanıcının kullanıcı adı ve şifre güncellemesi
-        değişiklikleriKaydetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(User.update(user,txt_kullaniciAdi.getText(),txt_parola.getText())){
-                    lbl_welcome.setText("Hoşgeldin "+ txt_kullaniciAdi.getText());
-                    Helper.showMsg("done");
+        değişiklikleriKaydetButton.addActionListener(e -> {
+            if (User.update(user, txt_kullaniciAdi.getText(), txt_parola.getText())) {
+                lbl_welcome.setText("Hoşgeldin " + txt_kullaniciAdi.getText());
+                Helper.showMsg("done");
 
-                }else{
-                    Helper.showMsg("error");
-                }
+            } else {
+                Helper.showMsg("error");
             }
         });
 
         // tıklanan aracın rezerve değilse kiralanması
-        kiralaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
-                int seciliRow = tbl_carList.getSelectedRow(); // tıklanan table satırının atanması
-                if(seciliRow != -1){
+        kiralaButton.addActionListener(e -> {
+            DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
+            int seciliRow = tbl_carList.getSelectedRow(); // tıklanan table satırının atanması
+            if (seciliRow != -1) {
 
-                    Car obj;
-                    obj = Car.getCarList().get(seciliRow);
+                Car obj;
+                obj = Car.getList().get(seciliRow);
 
-                    // Kullanıcının kiraladığı aracın profil altındaki tabloda listelenmesi
-                    if(obj.isAvailable() != "Rezerve"){
-                        model.setValueAt("Rezerve",seciliRow,3);  // Rezerve değilse rezerve olarak alanın değiştirilmesi
-                        Object[] row = new Object[col_rentedCarList.length];
-                        row[0] = obj.getId();
-                        row[1] = obj.getCity();
-                        row[2] = obj.getCarType();
-                        row[3] = "Rezerve";
-                        row[4] = obj.getPrice();
-                        mdl_rentedCarList.addRow(row);
-                        Helper.showMsg("done");
-                    }else{
-                        Helper.showMsg("Araç Rezerve Edilmiş");
-                    }
+                // Kullanıcının kiraladığı aracın profil altındaki tabloda listelenmesi
+           //     if (obj.isAvailable() != "Rezerve") {
+            //        model.setValueAt("Rezerve", seciliRow, 3);  // Rezerve değilse rezerve olarak alanın değiştirilmesi
+            //        Object[] row = new Object[col_rentedCarList.length];
+            //        row[0] = obj.getId();
+            //        row[1] = obj.getCityId();
+            //        row[2] = obj.getCarType();
+            //        row[3] = "Rezerve";
+            //        row[4] = obj.getPrice();
+           //         mdl_rentedCarList.addRow(row);
+           //         Helper.showMsg("done");
+           //     } else {
+           //         Helper.showMsg("Araç Rezerve Edilmiş");
+          //      }
 
 
-
-
-                }
             }
         });
 
@@ -169,14 +148,60 @@ public class UserManagement extends JFrame{
                 super.mouseClicked(e);
                 DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
                 int seciliRow = tbl_carList.getSelectedRow();
-                lbl_city.setText((String) model.getValueAt(seciliRow,1));
-                lbl_carType.setText((String) model.getValueAt(seciliRow,2));
-                lbl_price.setText(String.valueOf(model.getValueAt(seciliRow,4)));
+                lbl_city.setText((String) model.getValueAt(seciliRow, 1));
+                lbl_carType.setText((String) model.getValueAt(seciliRow, 2));
+                lbl_price.setText(String.valueOf(model.getValueAt(seciliRow, 4)));
+            }
+        });
+
+        // filtreyi kaldırır, tüm araçlar listelenir
+        btnTemizle.addActionListener(e -> sortCars());
+        çıkışYapButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                Helper.login.setVisible(true);
             }
         });
     }
 
+    //combobox ın içini doldurmak için
+    public  void comboSortCity(){
+        cmb_city.removeAllItems();
+        for (City city : City.getList()) {
+            cmb_city.addItem(new Item(city.getId(), city.getName()).getValue());
+        }
+    }
+    public void sortCars(){
+        DefaultTableModel tableModel = (DefaultTableModel) tbl_carList.getModel();
+        tableModel.setRowCount(0);
+        for (Car obj : Car.getList()) {
+            row_userCarList[0] = obj.getId();
+            row_userCarList[1] = City.getFetch(obj.getCityId()); // tabloya, id ye göre şehir isimlerini yazar
+            row_userCarList[2] = obj.getCarType();
+            row_userCarList[3] = obj.isAvailable();
+            row_userCarList[4] = obj.getPrice();
+            row_userCarList[5] = Company.getFetch(obj.getFirmId());
+            mdl_userCarlist.addRow(row_userCarList);
+        }
+    }
 
+    public void sortCars(ArrayList<Car> cars){
+        System.out.println("Çalışıyor 0");
+        DefaultTableModel tableModel1 = (DefaultTableModel) tbl_carList.getModel();
+        tableModel1.setRowCount(0);
+        System.out.println("Çalışıyor 1");
+        for (Car obj : cars) {
+            System.out.println("Çalışıyor 2");
+            row_userCarList[0] = obj.getId();
+            row_userCarList[1] = City.getFetch(obj.getCityId()); // tabloya, id ye göre şehir isimlerini yazar
+            row_userCarList[2] = obj.getCarType();
+            row_userCarList[3] = obj.isAvailable();
+            row_userCarList[4] = obj.getPrice();
+            mdl_userCarlist.addRow(row_userCarList);
+            System.out.println("Çalışıyor 3");
+        }
+    }
 
 
 }

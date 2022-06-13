@@ -60,7 +60,7 @@ public class User {
     // kullanıcı üyelikleri listelenmesi
     public static User getFetch(String username,String password){
         User obj=null;
-        String query="SELECT * FROM user WHERE username =? AND password=?";
+        String query="SELECT * FROM users WHERE username =? AND password=?";
 
         try {
             PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
@@ -81,7 +81,7 @@ public class User {
 
     // kullanıcı üyeliği ekleme
     public static boolean add(String username,String password){
-        String query="INSERT INTO user (username,password) VALUES (?,?)";
+        String query="INSERT INTO users (username,password) VALUES (?,?)";
 
         try {
             PreparedStatement pr=DbConnector.getInstance().prepareStatement(query);
@@ -104,7 +104,7 @@ public class User {
 
     // kullanıcı üyelik bilgileri güncelleme
     public static boolean update(User u,String username,String password){
-        String query="UPDATE user SET username = ?,password = ? WHERE username = ? AND password = ?";
+        String query="UPDATE users SET username = ?, password = ? WHERE username = ? AND password = ?";
 
         try {
             PreparedStatement pr=DbConnector.getInstance().prepareStatement(query);

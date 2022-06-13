@@ -2,6 +2,7 @@ package Model;
 
 import com.carRental.Helper.DbConnector;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,13 +11,21 @@ import java.util.ArrayList;
 public class Car {
 
     private int id;
-    private String city;
+    private int cityId;
     private String carType;
-    private String available;
+    private boolean available;
     private int price;
-
+    private int firmId;
     public Car() {
 
+    }
+    public Car(int id, int cityId, String carType, boolean available, int price,int firmId) {
+        this.id = id;
+        this.cityId = cityId;
+        this.carType = carType;
+        this.available = available;
+        this.price = price;
+        this.firmId = firmId;
     }
 
     public int getId() {
@@ -27,12 +36,12 @@ public class Car {
         this.id = id;
     }
 
-    public String getCity() {
-        return city;
+    public int getCityId() {
+        return cityId;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 
     public String getCarType() {
@@ -44,10 +53,15 @@ public class Car {
     }
 
     public String isAvailable() {
-        return available;
+        if(this.available){
+            return "Müsait";
+        }
+        else{
+            return "Rezerve";
+        }
     }
 
-    public void setAvailable(String available) {
+    public void setAvailable(boolean available) {
         this.available = available;
     }
 
@@ -59,8 +73,16 @@ public class Car {
         this.price = price;
     }
 
+    public int getFirmId() {
+        return firmId;
+    }
+
+    public void setFirmId(int firmId) {
+        this.firmId = firmId;
+    }
+
     // Kayıtlı araç listesinin verilmesi
-    public static ArrayList<Car> getCarList(){
+    public static ArrayList<Car> getList(){
         ArrayList<Car> carList = new ArrayList<>();
         String query = "SELECT * FROM car";
         Car obj;
@@ -70,17 +92,11 @@ public class Car {
             while (rs.next()){
                 obj = new Car();
                 obj.setId(rs.getInt("id"));
-                obj.setCity(rs.getString("city"));
+                obj.setCityId(rs.getInt("city_id"));
                 obj.setCarType(rs.getString("carType"));
                 obj.setPrice(rs.getInt("price"));
-                if(rs.getString("rentDate") != null && rs.getString("returnDate") != null){
-                    obj.setAvailable("Rezerve");
-                }else {
-                    obj.setAvailable("Müsait");
-                }
-
-
-
+                obj.setAvailable(rs.getBoolean("available"));
+                obj.setFirmId(rs.getInt("firm_id"));
                 carList.add(obj);
 
             }
@@ -89,5 +105,57 @@ public class Car {
         }
 
         return carList;
+    }
+
+    //deneme
+    public static String searchQuery(String name, String userName) {
+        String sql = "select * from users where name like '%{{name}}%' and user_name like '%{{user_name}}%'";
+        sql = sql.replace("{{name}}", name);
+        sql = sql.replace("{{user_name}}", userName);
+
+        return sql;
+    }
+
+    //fiyat bilgisiiçin sorgu
+    public static ArrayList<Car> sortFilterForPrice(int cityId, String carType, int maxPrice, boolean isSelect) {
+        ArrayList<Car> cars = new ArrayList<>();
+        Car car =null;
+        String sql = "select * from car where city_id =? and cartype = ? and available = ? and  price < ?";
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,cityId);
+            preparedStatement.setString(2,carType);
+            preparedStatement.setBoolean(3,isSelect);
+            preparedStatement.setInt(4,maxPrice);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getString("cartype"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
+                cars.add(car);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cars;
+    }
+    //Fiyat bilgisi girmemişse çalışacak
+    public static ArrayList<Car> sortFilter(int cityId, String carType, boolean isSelect) {
+        String sql = "select * from car where city_id =? and cartype = ? and available = ?";
+        ArrayList<Car> cars = new ArrayList<>();
+        Car car = null;
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,cityId);
+            preparedStatement.setString(2,carType);
+            preparedStatement.setBoolean(3,isSelect);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getString("cartype"),rs.getBoolean("available"), rs.getInt("price"),rs.getInt("firm_id"));
+                cars.add(car);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cars;
     }
 }

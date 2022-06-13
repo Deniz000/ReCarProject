@@ -43,20 +43,15 @@ public class Login extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE );
 
         // firma giriş ekranına yönlendirme
-        btn_firmaGiris.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                getCompanyLogin().setVisible(true);
-            }
+        btn_firmaGiris.addActionListener(e -> {
+            setVisible(false);
+            getCompanyLogin().setVisible(true);
         });
         // kullanıcı giriş ekranına yönlendirme
-        btn_kullaniciGiris.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                getUserLogin().setVisible(true);
-            }
+        btn_kullaniciGiris.addActionListener(e -> {
+            setVisible(false);
+            getUserLogin().setVisible(true);
         });
     }
 }
+

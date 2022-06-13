@@ -37,46 +37,40 @@ public class CompanyLogin extends JFrame {
             }
         });
         //Firma üyeliği mevcutsa giriş
-        btn_girisYap.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Helper.isFieldEmpty(txt_firmaAdı) || Helper.isFieldEmpty(psw_firmaParola)){
-                    Helper.showMsg("fill");
+        btn_girisYap.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txt_firmaAdı) || Helper.isFieldEmpty(psw_firmaParola)){
+                Helper.showMsg("fill");
+            }else{
+                Company c = Company.getFetch(txt_firmaAdı.getText(),psw_firmaParola.getText());
+                if(c ==null){
+                    Helper.showMsg("Firma Bulunamadı !");
                 }else{
-                    Company c = Company.getFetch(txt_firmaAdı.getText(),psw_firmaParola.getText());
-                    if(c ==null){
-                        Helper.showMsg("Firma Bulunamadı !");
-                    }else{
-                        Helper.login.dispose();
-
-                        dispose(); // giriş başarılıysa giriş ekranı sonlandır
-                    }
+                    dispose();
+                    Helper.registerCompany = new CompanyManagement(c);
+                    Helper.registerCompany.setVisible(true);// giriş başarılıysa giriş ekranı sonlandır
                 }
             }
         });
 
         //Firmalar için üyelik
-        btn_uyeOl.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Helper.isFieldEmpty(txt_firmaAdı) || Helper.isFieldEmpty(psw_firmaParola)){
-                    Helper.showMsg("fill");
-                }else {
-                    Company c = Company.getFetch(txt_firmaAdı.getText(),psw_firmaParola.getText());
-                    if(c != null){
-                        Helper.showMsg("Üyelik Zaten Mevcut !");
-                    }else{
+        btn_uyeOl.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txt_firmaAdı) || Helper.isFieldEmpty(psw_firmaParola)){
+                Helper.showMsg("fill");
+            }else {
+                Company c = Company.getFetch(txt_firmaAdı.getText(),psw_firmaParola.getText());
+                if(c != null){
+                    Helper.showMsg("Üyelik Zaten Mevcut !");
+                }else{
 
-                        if(Company.add(txt_firmaAdı.getText(),psw_firmaParola.getText()) == true){
-                            Helper.showMsg("Üyelik Başarılı");
-                        }
+                    if(Company.add(txt_firmaAdı.getText(), psw_firmaParola.getText())){
+                        Helper.showMsg("Üyelik Başarılı");
+                        dispose();
+                        Helper.registerCompany = new CompanyManagement(c);
+                        Helper.registerCompany.setVisible(true);
                     }
                 }
-
             }
+
         });
     }
-
-
-
 }

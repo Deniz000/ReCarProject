@@ -1,12 +1,16 @@
 package com.carRental.Helper;
 
+import Model.Company;
 import Model.User;
+import Views.CompanyManagement;
 import Views.Login;
 
+import javax.jws.Oneway;
 import javax.swing.*;
 
 public class Helper {
     public static Login login = new Login();
+    public static CompanyManagement registerCompany = null;
     public static void changeUINimbus(){
         for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
             try {
@@ -57,5 +61,19 @@ public class Helper {
         UIManager.put("OptionPane.okButtonText" , "Tamam");
         UIManager.put("OptionPane.yesButtonText" , "Evet");
         UIManager.put("OptionPane.noButtonText" , "Hayır");
+    }
+
+
+    public static boolean confirm(String str) {
+        String msg;
+        switch (str) {
+            case "sure":
+                msg = "Bu işlemi gerçekleştirmek istediğine emin misiniz?";
+                break;
+            default:
+                msg = str;
+                break;
+        }
+        return JOptionPane.showConfirmDialog(null, msg, "!", JOptionPane.YES_NO_OPTION) == 0;
     }
 }
