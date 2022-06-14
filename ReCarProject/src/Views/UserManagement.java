@@ -48,11 +48,13 @@ public class UserManagement extends JFrame{
     private DefaultTableModel mdl_rentedCarList;
 
 
-
-    Object[] col_userCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"}; //sortCar() metodunda ulaşabilmek için burada tanımladım
+    //sortCar() metodunda ulaşabilmek için burada tanımladım
+    Object[] col_userCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"};
     private Object[] row_userCarList = new Object[col_userCarList.length];
 
-    Object[] col_rentedCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"};
+    //sortRent() metodunda ulaşabilmek için burada tanımladım
+    Object[] col_rentedCarList ={"ID", "Şehir", "Araç", "Kiralama Tarihi", "Dönüş Tarihi", "Firma"};;
+    private Object[] row_rentalCarList = new Object[col_rentedCarList.length];
 
 
     public UserManagement(User user) {
@@ -64,6 +66,10 @@ public class UserManagement extends JFrame{
         setTitle(Config.PROJECT_TİTLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         lbl_welcome.setText("Hoşgeldin " + this.user.getUsername());
+        comboSortCity();  // şehirleri combobox 'a yazar
+        comboSortCarType(); // araç tiplerini yazar
+
+
         //Model userCarlist
         mdl_userCarlist = new DefaultTableModel();
         mdl_userCarlist.setColumnIdentifiers(col_userCarList);
@@ -77,13 +83,7 @@ public class UserManagement extends JFrame{
 
         tbl_rentedCarList.setModel(mdl_rentedCarList);
         tbl_rentedCarList.getTableHeader().setReorderingAllowed(false); // yeniden sıralanabilirlik
-        comboSortCity();
-        comboSortCarType();
-
-        // Veritabanında kayıtlı araçların araçlar sekmesindeki tabloda listelenmesi
-
-
-
+        sortRentCar();
 
         // şehir ve araç tipine göre tabloda listelenecek araçların filtrelenmesi
         araButton.addActionListener(e -> {
@@ -100,8 +100,6 @@ public class UserManagement extends JFrame{
                 }
                 String sql = null;
                 if(maxPrice==0){
-                 //   sql = Car.searchQuery(cityId, carType,isSelect);
-
                     sortCars(Car.sortFilter(cityId,carType,isSelect));
                 }
                 else {
@@ -218,6 +216,22 @@ public class UserManagement extends JFrame{
             row_userCarList[5] = Company.getFetch(obj.getFirmId());
             mdl_userCarlist.addRow(row_userCarList);
             System.out.println("Çalışıyor 3");
+        }
+    }
+
+    public void sortRentCar(){
+        DefaultTableModel tableModel = (DefaultTableModel) tbl_rentedCarList.getModel();
+        tableModel.setRowCount(0);
+        for(Rental rental : Rental.getListForUser(this.user.getId())){
+            System.out.println("çalışıyo 1");
+            row_rentalCarList[0] = rental.getId();
+            row_rentalCarList[1] = Car.getFetchCityName(rental.getCarId());
+            row_rentalCarList[2] = Car.getFetch(rental.getCarId());
+            row_rentalCarList[3] = rental.getRentDate();
+            row_rentalCarList[4] = rental.getReturnDate();
+            row_rentalCarList[5] = Company.getFetch(rental.getFirmId());
+            mdl_rentedCarList.addRow(row_rentalCarList);
+            System.out.println("calışııyo 2");
         }
     }
 

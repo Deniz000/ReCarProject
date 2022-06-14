@@ -102,6 +102,28 @@ public class Rental {
         }
         return rentals;
     }
+    public static ArrayList<Rental> getListForUser(int id){
+        ArrayList<Rental> rentals = new ArrayList<>();
+        String sql = "select * from rentals where user_id = ?";
+        Rental rental = null;
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                rental = new Rental();
+                rental.setId(rs.getInt("id"));
+                rental.setCarId(rs.getInt("car_id"));
+                rental.setFirmId(rs.getInt("firm_id"));
+                rental.setRentDate(rs.getDate("rent_date"));
+                rental.setReturnDate(rs.getDate("return_date"));
+                rentals.add(rental);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rentals;
+    }
 
 
     public static ArrayList<Date> startDateControl(int id){

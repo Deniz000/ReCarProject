@@ -33,9 +33,13 @@ public class CompanyManagement extends JFrame {
     private JButton hesabıSilButton;
     private JTable tbl_rentalList;
     private JButton çıkışYapButton;
+
+    //sortCar() 'dan ulaşabilmek için
+    private DefaultTableModel mdl_carList;
     private Object[] col_carList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat"};;
     private Object[] row_carList = new Object[col_carList.length];
-    private DefaultTableModel mdl_carList;
+
+    //sortRent() 'dan ulaşabilmek için
     private Object[] col_rentalList = {"ID", "Araç", "Kiralayan", "Kiralama Tarihi", "Dönüş Tarihi"};
     private Object[] row_rentalList = new Object[col_carList.length];
     private DefaultTableModel mdl_rentalList;

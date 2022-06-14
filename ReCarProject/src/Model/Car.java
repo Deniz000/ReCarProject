@@ -125,16 +125,25 @@ public class Car {
         }
         return name;
     }
-
-
-    //deneme
-    public static String searchQuery(String name, String userName) {
-        String sql = "select * from users where name like '%{{name}}%' and user_name like '%{{user_name}}%'";
-        sql = sql.replace("{{name}}", name);
-        sql = sql.replace("{{user_name}}", userName);
-
-        return sql;
+    public static String getFetchCityName(int id){
+        String query= "select name from car \n" +
+                "inner join cities\n" +
+                "on cities.id = car.city_id\n" +
+                "where car.id = ? ";
+        String name = null;
+        try {
+            PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,id);
+            ResultSet rs=pr.executeQuery();
+            if (rs.next()){
+                name = rs.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
     }
+
 
     //fiyat bilgisiiçin sorgu
     public static ArrayList<Car> sortFilterForPrice(int cityId, int carType, int maxPrice, boolean isSelect) {
@@ -178,4 +187,6 @@ public class Car {
         }
         return cars;
     }
+
+
 }
