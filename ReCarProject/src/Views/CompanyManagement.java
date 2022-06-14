@@ -9,8 +9,6 @@ import com.carRental.Helper.Item;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CompanyManagement extends JFrame {
     private JPanel wrapper;
@@ -33,6 +31,7 @@ public class CompanyManagement extends JFrame {
     private JTextField txtMail;
     private JTextField txtPassword;
     private JButton hesabıSilButton;
+    private JTable table1;
     private Object[] col_carList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat"};;
     private Object[] row_carList = new Object[col_carList.length];
     private DefaultTableModel mdl_carList;
@@ -89,7 +88,7 @@ public class CompanyManagement extends JFrame {
         for (Car obj: Company.getList(this.company.getId())){
             row_carList[0] = obj.getId();
             row_carList[1] = City.getFetch(obj.getCityId()); // tabloya, id ye göre şehir isimlerini yazar
-            row_carList[2] = obj.getCarType();
+            row_carList[2] = obj.getCarTypeId();
             row_carList[3] = obj.isAvailable();
             row_carList[4] = obj.getPrice();
             mdl_carList.addRow(row_carList);        }

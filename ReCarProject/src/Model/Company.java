@@ -111,7 +111,7 @@ public class Company {
             preparedStatement.setInt(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getString("cartype"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getInt("car_type_id"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
                 cars.add(car);
             }
 

@@ -12,17 +12,17 @@ public class Car {
 
     private int id;
     private int cityId;
-    private String carType;
+    private int carTypeId;
     private boolean available;
     private int price;
     private int firmId;
     public Car() {
 
     }
-    public Car(int id, int cityId, String carType, boolean available, int price,int firmId) {
+    public Car(int id, int cityId, int carTypeId, boolean available, int price,int firmId) {
         this.id = id;
         this.cityId = cityId;
-        this.carType = carType;
+        this.carTypeId = carTypeId;
         this.available = available;
         this.price = price;
         this.firmId = firmId;
@@ -44,12 +44,12 @@ public class Car {
         this.cityId = cityId;
     }
 
-    public String getCarType() {
-        return carType;
+    public int getCarTypeId() {
+        return carTypeId;
     }
 
-    public void setCarType(String carType) {
-        this.carType = carType;
+    public void setCarTypeId(int carTypeId) {
+        this.carTypeId = carTypeId;
     }
 
     public String isAvailable() {
@@ -93,7 +93,7 @@ public class Car {
                 obj = new Car();
                 obj.setId(rs.getInt("id"));
                 obj.setCityId(rs.getInt("city_id"));
-                obj.setCarType(rs.getString("carType"));
+                obj.setCarTypeId(rs.getInt("car_type_id"));
                 obj.setPrice(rs.getInt("price"));
                 obj.setAvailable(rs.getBoolean("available"));
                 obj.setFirmId(rs.getInt("firm_id"));
@@ -107,6 +107,7 @@ public class Car {
         return carList;
     }
 
+
     //deneme
     public static String searchQuery(String name, String userName) {
         String sql = "select * from users where name like '%{{name}}%' and user_name like '%{{user_name}}%'";
@@ -117,19 +118,19 @@ public class Car {
     }
 
     //fiyat bilgisiiçin sorgu
-    public static ArrayList<Car> sortFilterForPrice(int cityId, String carType, int maxPrice, boolean isSelect) {
+    public static ArrayList<Car> sortFilterForPrice(int cityId, int carType, int maxPrice, boolean isSelect) {
         ArrayList<Car> cars = new ArrayList<>();
         Car car =null;
-        String sql = "select * from car where city_id =? and cartype = ? and available = ? and  price < ?";
+        String sql = "select * from car where city_id =? and car_type_id = ? and available = ? and  price < ?";
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,cityId);
-            preparedStatement.setString(2,carType);
+            preparedStatement.setInt(2,carType);
             preparedStatement.setBoolean(3,isSelect);
             preparedStatement.setInt(4,maxPrice);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getString("cartype"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getInt("car_type_id"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
                 cars.add(car);
             }
         } catch (SQLException e) {
@@ -139,18 +140,18 @@ public class Car {
         return cars;
     }
     //Fiyat bilgisi girmemişse çalışacak
-    public static ArrayList<Car> sortFilter(int cityId, String carType, boolean isSelect) {
-        String sql = "select * from car where city_id =? and cartype = ? and available = ?";
+    public static ArrayList<Car> sortFilter(int cityId, int carType, boolean isSelect) {
+        String sql = "select * from car where city_id = ? and car_type_id = ? and available = ?";
         ArrayList<Car> cars = new ArrayList<>();
         Car car = null;
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,cityId);
-            preparedStatement.setString(2,carType);
+            preparedStatement.setInt(2,carType);
             preparedStatement.setBoolean(3,isSelect);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getString("cartype"),rs.getBoolean("available"), rs.getInt("price"),rs.getInt("firm_id"));
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getInt("car_type_id"),rs.getBoolean("available"), rs.getInt("price"),rs.getInt("firm_id"));
                 cars.add(car);
             }
         } catch (SQLException e) {

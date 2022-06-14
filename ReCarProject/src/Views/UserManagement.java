@@ -1,9 +1,6 @@
 package Views;
 
-import Model.Car;
-import Model.City;
-import Model.Company;
-import Model.User;
+import Model.*;
 import com.carRental.Helper.Config;
 import com.carRental.Helper.Helper;
 import com.carRental.Helper.Item;
@@ -41,6 +38,7 @@ public class UserManagement extends JFrame{
     private JComboBox comboBox3;
     private JComboBox comboBox4;
     private JTextField textField2;
+    private JLabel lbl_Firm;
     private DefaultTableModel mdl_userCarlist;
     private DefaultTableModel mdl_rentedCarList;
 
@@ -75,6 +73,7 @@ public class UserManagement extends JFrame{
         tbl_rentedCarList.setModel(mdl_rentedCarList);
         tbl_rentedCarList.getTableHeader().setReorderingAllowed(false); // yeniden sıralanabilirlik
         comboSortCity();
+        comboSortCarType();
 
         // Veritabanında kayıtlı araçların araçlar sekmesindeki tabloda listelenmesi
 
@@ -85,12 +84,19 @@ public class UserManagement extends JFrame{
         araButton.addActionListener(e -> {
                 //String city = cmb_city.getSelectedItem().toString();
                 int cityId = cmb_city.getSelectedIndex() + 1;
-                String carType = cmb_carType.getSelectedItem().toString();
+                int carType = cmb_carType.getSelectedIndex() + 1;
                 int maxPrice = Integer.parseInt(txtMaxPrice.getText());
-                boolean isSelect = radioBtnAvailable.isSelected();
+                boolean isSelect = false;
+                if(radioBtnAvailable.isSelected()){
+                    isSelect = true;
+                }
+                else{
+                    isSelect = false;
+                }
                 String sql = null;
                 if(maxPrice==0){
                  //   sql = Car.searchQuery(cityId, carType,isSelect);
+
                     sortCars(Car.sortFilter(cityId,carType,isSelect));
                 }
                 else {
@@ -151,6 +157,7 @@ public class UserManagement extends JFrame{
                 lbl_city.setText((String) model.getValueAt(seciliRow, 1));
                 lbl_carType.setText((String) model.getValueAt(seciliRow, 2));
                 lbl_price.setText(String.valueOf(model.getValueAt(seciliRow, 4)));
+                lbl_Firm.setText((String) model.getValueAt(seciliRow,5));
             }
         });
 
@@ -172,13 +179,19 @@ public class UserManagement extends JFrame{
             cmb_city.addItem(new Item(city.getId(), city.getName()).getValue());
         }
     }
+    public  void comboSortCarType(){
+        cmb_carType.removeAllItems();
+        for (CarType carType : CarType.getList()) {
+            cmb_carType.addItem(new Item(carType.getId(), carType.getName()).getValue());
+        }
+    }
     public void sortCars(){
         DefaultTableModel tableModel = (DefaultTableModel) tbl_carList.getModel();
         tableModel.setRowCount(0);
         for (Car obj : Car.getList()) {
             row_userCarList[0] = obj.getId();
             row_userCarList[1] = City.getFetch(obj.getCityId()); // tabloya, id ye göre şehir isimlerini yazar
-            row_userCarList[2] = obj.getCarType();
+            row_userCarList[2] = CarType.getFetch(obj.getCarTypeId());
             row_userCarList[3] = obj.isAvailable();
             row_userCarList[4] = obj.getPrice();
             row_userCarList[5] = Company.getFetch(obj.getFirmId());
@@ -195,9 +208,10 @@ public class UserManagement extends JFrame{
             System.out.println("Çalışıyor 2");
             row_userCarList[0] = obj.getId();
             row_userCarList[1] = City.getFetch(obj.getCityId()); // tabloya, id ye göre şehir isimlerini yazar
-            row_userCarList[2] = obj.getCarType();
+            row_userCarList[2] = CarType.getFetch(obj.getCarTypeId());
             row_userCarList[3] = obj.isAvailable();
             row_userCarList[4] = obj.getPrice();
+            row_userCarList[5] = Company.getFetch(obj.getFirmId());
             mdl_userCarlist.addRow(row_userCarList);
             System.out.println("Çalışıyor 3");
         }
