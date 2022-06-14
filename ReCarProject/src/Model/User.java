@@ -57,6 +57,23 @@ public class User {
 
 
 
+    public static String getFetch(int id){
+        String query="SELECT * FROM users WHERE id = ?";
+        String name = null;
+        try {
+            PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,id);
+            ResultSet rs=pr.executeQuery();
+            if (rs.next()){
+                name = rs.getString("username");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
+
     // kullanıcı üyelikleri listelenmesi
     public static User getFetch(String username,String password){
         User obj=null;
@@ -126,6 +143,5 @@ public class User {
 
         return true;
     }
-
 
 }

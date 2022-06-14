@@ -8,10 +8,14 @@ import com.carRental.Helper.Item;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class UserManagement extends JFrame{
     private JPanel wrapper;
+    private User user;
     private JButton araButton;
     private JComboBox cmb_city;
     private JComboBox cmb_carType;
@@ -32,13 +36,14 @@ public class UserManagement extends JFrame{
     private JTextField txtMaxPrice;
     private JButton btnTemizle;
     private JButton çıkışYapButton;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JTextField textField1;
-    private JComboBox comboBox3;
-    private JComboBox comboBox4;
-    private JTextField textField2;
+    private JComboBox cmbEndDay;
+    private JComboBox cmdEndMounth;
+    private JTextField txtEndYear;
     private JLabel lbl_Firm;
+    private JButton btnListele;
+    private JTextField txtStartYear;
+    private JComboBox cmbStartMounth;
+    private JComboBox cmbStartDay;
     private DefaultTableModel mdl_userCarlist;
     private DefaultTableModel mdl_rentedCarList;
 
@@ -49,16 +54,16 @@ public class UserManagement extends JFrame{
 
     Object[] col_rentedCarList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat", "Firma"};
 
-    private User user;
 
     public UserManagement(User user) {
         add(wrapper);
-        setSize(1000, 600);
+        this.user = user;
+        setSize(1000, 800);
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle(Config.PROJECT_TİTLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        lbl_welcome.setText("Hoşgeldin " + user.getUsername());
+        lbl_welcome.setText("Hoşgeldin " + this.user.getUsername());
         //Model userCarlist
         mdl_userCarlist = new DefaultTableModel();
         mdl_userCarlist.setColumnIdentifiers(col_userCarList);
@@ -119,34 +124,6 @@ public class UserManagement extends JFrame{
             }
         });
 
-        // tıklanan aracın rezerve değilse kiralanması
-        kiralaButton.addActionListener(e -> {
-            DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
-            int seciliRow = tbl_carList.getSelectedRow(); // tıklanan table satırının atanması
-            if (seciliRow != -1) {
-
-                Car obj;
-                obj = Car.getList().get(seciliRow);
-
-                // Kullanıcının kiraladığı aracın profil altındaki tabloda listelenmesi
-           //     if (obj.isAvailable() != "Rezerve") {
-            //        model.setValueAt("Rezerve", seciliRow, 3);  // Rezerve değilse rezerve olarak alanın değiştirilmesi
-            //        Object[] row = new Object[col_rentedCarList.length];
-            //        row[0] = obj.getId();
-            //        row[1] = obj.getCityId();
-            //        row[2] = obj.getCarType();
-            //        row[3] = "Rezerve";
-            //        row[4] = obj.getPrice();
-           //         mdl_rentedCarList.addRow(row);
-           //         Helper.showMsg("done");
-           //     } else {
-           //         Helper.showMsg("Araç Rezerve Edilmiş");
-          //      }
-
-
-            }
-        });
-
         // seçilen satırdaki bilgilerin araç bilgileri altında ekrana yazdırılması
         tbl_carList.addMouseListener(new MouseAdapter() {
             @Override
@@ -161,15 +138,41 @@ public class UserManagement extends JFrame{
             }
         });
 
+        // tıklanan aracın rezerve değilse kiralanması
+        kiralaButton.addActionListener(e -> {
+
+        });
+
+
         // filtreyi kaldırır, tüm araçlar listelenir
         btnTemizle.addActionListener(e -> sortCars());
-        çıkışYapButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                Helper.login.setVisible(true);
-            }
+        çıkışYapButton.addActionListener(e -> {
+            dispose();
+            Helper.login.setVisible(true);
         });
+
+        // tamamlanmadı. Tarihe göre listelenecek.
+        btnListele.addActionListener(e -> {
+            int sDay = cmbStartDay.getSelectedIndex() + 1; // 0 dan başladığı için + 1
+            int sMounth = cmbStartMounth.getSelectedIndex() + 1;
+            int sYear = Integer.parseInt(txtStartYear.getText());
+
+            int eDay = cmbEndDay.getSelectedIndex() + 1;
+            int eMounth = cmdEndMounth.getSelectedIndex() + 1;
+            int eYear = Integer.parseInt(txtEndYear.getText());
+
+            //string i date e çeviriyor
+            LocalDate sDate = LocalDate.of(eYear,eMounth,eDay);
+            LocalDate eDate = LocalDate.of(eYear,eMounth,eDay);
+
+            Date startDate = Rental.startDateControl(this.user.getId()).get(0);
+            Date endDate = Rental.endDateControl(this.user.getId()).get(0);
+        });
+
+        kiralaButton.addActionListener(e -> {
+
+        });
+
     }
 
     //combobox ın içini doldurmak için

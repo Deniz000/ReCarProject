@@ -129,7 +129,7 @@ public class Company {
 
     public static int getFetch(String username){
         int id = 0;
-        String query="SELECT id FROM company WHERE companyname =?";
+        String query="SELECT id FROM company WHERE companyname = ?";
         try {
             PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
             pr.setString(1,username);
@@ -196,16 +196,11 @@ public class Company {
             preparedStatement.setString(3,eMail);
             preparedStatement.setInt(4,cityId);
             preparedStatement.setInt(5,id);
-            int response= preparedStatement.executeUpdate();
-
-            if(response == -1){
-                Helper.showMsg("error");
-            }
-            return response != -1;
+            return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public static boolean delete(int selectedId) {

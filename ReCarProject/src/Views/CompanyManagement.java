@@ -1,8 +1,6 @@
 package Views;
 
-import Model.Car;
-import Model.City;
-import Model.Company;
+import Model.*;
 import com.carRental.Helper.Config;
 import com.carRental.Helper.Helper;
 import com.carRental.Helper.Item;
@@ -33,10 +31,14 @@ public class CompanyManagement extends JFrame {
     private JTextField txtMail;
     private JTextField txtPassword;
     private JButton hesabıSilButton;
-    private JTable table1;
+    private JTable tbl_rentalList;
+    private JButton çıkışYapButton;
     private Object[] col_carList = {"ID", "Şehir", "Araç Tipi", "Müsaitlik Durumu", "Fiyat"};;
     private Object[] row_carList = new Object[col_carList.length];
     private DefaultTableModel mdl_carList;
+    private Object[] col_rentalList = {"ID", "Araç", "Kiralayan", "Kiralama Tarihi", "Dönüş Tarihi"};
+    private Object[] row_rentalList = new Object[col_carList.length];
+    private DefaultTableModel mdl_rentalList;
 
     public CompanyManagement(Company company){
         add(wrapper);
@@ -47,13 +49,19 @@ public class CompanyManagement extends JFrame {
         setTitle(Config.PROJECT_TİTLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         comboSortCity();
-        txtCompanyName.setText(company.getUsername());
-        txtPassword.setText(company.getPassword());
-        txtMail.setText(company.geteMail());
+        txtCompanyName.setText(this.company.getUsername());
+        txtPassword.setText(this.company.getPassword());
+        txtMail.setText(this.company.geteMail());
+        //Rezervasyon Listesi için
+        mdl_rentalList = new DefaultTableModel();
+        mdl_rentalList.setColumnIdentifiers(col_rentalList);
+        tbl_rentalList.setModel(mdl_rentalList);
+        tbl_rentalList.getTableHeader().setReorderingAllowed(false);
+        sortRental();
+
         //Araç tablosu için:
         mdl_carList =new DefaultTableModel();
         mdl_carList.setColumnIdentifiers(col_carList);
-
         tbtlCarList.setModel(mdl_carList);
         tbtlCarList.getTableHeader().setReorderingAllowed(false);
 
@@ -63,12 +71,6 @@ public class CompanyManagement extends JFrame {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-
-
-        //Bilgileri güncelleme ksımı
-        btUpdate.addActionListener(e -> {
-
-        });
 
         // ilişisel işlemler gerçekleştirilecek
         hesabıSilButton.addActionListener(e -> {
@@ -82,19 +84,29 @@ public class CompanyManagement extends JFrame {
 
             }
         });
+        // tüm kodlar tam ama çalışmıyor
         btUpdate.addActionListener(e -> {
             String name = txtCompanyName.getText();
             int cityId = cmbCity.getSelectedIndex() +1;
             String eMail = txtMail.getText();
             String password = txtPassword.getText();
 
-            if(Company.update(name, cityId, eMail, password)){
-                Helper.showMsg("done");
+            if(Helper.isFieldEmpty(txtCompanyName) || Helper.isFieldEmpty(txtMail) || Helper.isFieldEmpty(txtPassword)){
+                Helper.showMsg("fill");
+            }
+            else {
+                if (Company.update(name, cityId, eMail, password)) {
+                    Helper.showMsg("done");
 
-            } else {
-                Helper.showMsg("error");
+                } else {
+                    Helper.showMsg("error");
+                }
             }
 
+        });
+        çıkışYapButton.addActionListener(e -> {
+            dispose();
+            Helper.login.setVisible(true);
         });
     }
 
@@ -114,6 +126,22 @@ public class CompanyManagement extends JFrame {
         cmbCity.removeAllItems();
         for (City city : City.getList()) {
             cmbCity.addItem(new Item(city.getId(), city.getName()).getValue());
+        }
+    }
+    public void sortRental(){
+        DefaultTableModel tableModel = (DefaultTableModel) tbl_rentalList.getModel();
+        tableModel.setRowCount(0);
+        System.out.println("çalışıyo0");
+        System.out.println(company.getId());
+        for(Rental rental : Rental.getListForCompany(company.getId())){
+            System.out.println("çalışıyo 1");
+            row_rentalList[0] = rental.getId();
+            row_rentalList[1] = Car.getFetch(rental.getCarId());
+            row_rentalList[2] = User.getFetch(rental.getUserId());
+            row_rentalList[3] = rental.getRentDate();
+            row_rentalList[4] = rental.getReturnDate();
+            mdl_rentalList.addRow(row_rentalList);
+            System.out.println("calışııyo 2");
         }
     }
 

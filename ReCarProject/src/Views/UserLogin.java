@@ -42,9 +42,8 @@ public class UserLogin extends JFrame {
                 }else{
                     Helper.login.dispose(); //?
                     // giriş doğruysa user giriş ekranı üretme
-                    UserManagement userManagement = new UserManagement(u);
-                    userManagement.setVisible(true);
-                    dispose();
+                    Helper.registerUser = new UserManagement(u);
+                    Helper.registerUser.setVisible(true);
                 }
             }
         });

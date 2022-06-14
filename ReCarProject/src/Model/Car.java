@@ -107,6 +107,25 @@ public class Car {
         return carList;
     }
 
+    public static String getFetch(int id){
+        String query= "select name from car  \n" +
+                "inner join cartype\n" +
+                "on car.car_type_id = cartype.id\n" +
+                "where car.id = ?";
+        String name = null;
+        try {
+            PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,id);
+            ResultSet rs=pr.executeQuery();
+            if (rs.next()){
+                name = rs.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
 
     //deneme
     public static String searchQuery(String name, String userName) {
