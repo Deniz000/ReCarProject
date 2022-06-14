@@ -63,10 +63,8 @@ public class CompanyLogin extends JFrame {
                 }else{
 
                     if(Company.add(txt_firmaAdı.getText(), psw_firmaParola.getText())){
-                        Helper.showMsg("Üyelik Başarılı");
-                        dispose();
-                        Helper.registerCompany = new CompanyManagement(c);
-                        Helper.registerCompany.setVisible(true);
+                        Helper.showMsg("Üyelik Başarılı. Giriş yapmak için sekmeyi \n kapatıp GİRİŞ YAP butonuna tıklayınız");
+
                     }
                 }
             }

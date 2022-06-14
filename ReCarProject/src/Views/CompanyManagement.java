@@ -9,6 +9,8 @@ import com.carRental.Helper.Item;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CompanyManagement extends JFrame {
     private JPanel wrapper;
@@ -80,8 +82,23 @@ public class CompanyManagement extends JFrame {
 
             }
         });
+        btUpdate.addActionListener(e -> {
+            String name = txtCompanyName.getText();
+            int cityId = cmbCity.getSelectedIndex() +1;
+            String eMail = txtMail.getText();
+            String password = txtPassword.getText();
+
+            if(Company.update(name, cityId, eMail, password)){
+                Helper.showMsg("done");
+
+            } else {
+                Helper.showMsg("error");
+            }
+
+        });
     }
 
+    //firmaya ait araçlar listeleniyor
     public void sortCar(){
         DefaultTableModel tableModel = (DefaultTableModel) tbtlCarList.getModel();
         tableModel.setRowCount(0);

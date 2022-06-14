@@ -28,18 +28,6 @@ public class Company {
         this.eMail = eMail;
     }
 
-    public static boolean delete(int selectedId) {
-        String sql = "delete from company where id = ?";
-
-        try {
-            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
-            preparedStatement.setInt(1,selectedId);
-            return preparedStatement.executeUpdate() != -1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
 
     public int getId() {
         return id;
@@ -139,6 +127,22 @@ public class Company {
     }
 
 
+    public static int getFetch(String username){
+        int id = 0;
+        String query="SELECT id FROM company WHERE companyname =?";
+        try {
+            PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
+            pr.setString(1,username);
+            ResultSet rs=pr.executeQuery();
+            if (rs.next()){
+                id = rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
     public static Company getFetch(String username,String password){
         Company obj=null;
         String query="SELECT * FROM company WHERE companyname =? AND password=?";
@@ -181,4 +185,40 @@ public class Company {
 
         return true;
     }
+
+    public static boolean update(String name, int cityId, String eMail, String password) {
+        String sql = "update company set companyname = ?, password = ?, email = ?, city_id = ? where id = ?";
+        int id = getFetch(name);
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setString(1,name);
+            preparedStatement.setString(2,password);
+            preparedStatement.setString(3,eMail);
+            preparedStatement.setInt(4,cityId);
+            preparedStatement.setInt(5,id);
+            int response= preparedStatement.executeUpdate();
+
+            if(response == -1){
+                Helper.showMsg("error");
+            }
+            return response != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean delete(int selectedId) {
+        String sql = "delete from company where id = ?";
+
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,selectedId);
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
 }

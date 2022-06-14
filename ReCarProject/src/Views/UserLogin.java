@@ -60,7 +60,8 @@ public class UserLogin extends JFrame {
                 }else{
 
                     if(User.add(txt_kullaniciAdi.getText(), psw_parola.getText())){
-                        Helper.showMsg("Üyelik Başarılı");
+                        Helper.showMsg("Üyelik Başarılı. Giriş yapmak için sekmeyi \n kapatıp GİRİŞ YAP butonuna tıklayınız");
+
                     }
                 }
             }

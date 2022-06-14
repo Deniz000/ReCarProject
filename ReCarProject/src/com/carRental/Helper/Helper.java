@@ -4,6 +4,7 @@ import Model.Company;
 import Model.User;
 import Views.CompanyManagement;
 import Views.Login;
+import Views.UserManagement;
 
 import javax.jws.Oneway;
 import javax.swing.*;
@@ -11,6 +12,7 @@ import javax.swing.*;
 public class Helper {
     public static Login login = new Login();
     public static CompanyManagement registerCompany = null;
+    public static UserManagement registerUser = null;
     public static void changeUINimbus(){
         for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
             try {
