@@ -28,6 +28,34 @@ public class Car {
         this.firmId = firmId;
     }
 
+    public static boolean add(int price, int cityId, boolean b, int id, int typeId) {
+        String sql = "insert into car (price, city_id,available, firm_id, car_type_id) values (?,?,?,?,?)";
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,price);
+            preparedStatement.setInt(2,cityId);
+            preparedStatement.setBoolean(3,b);
+            preparedStatement.setInt(4,id);
+            preparedStatement.setInt(5,typeId);
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean deleteById(int carId) {
+        String sql = "delete from car where id = ?";
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,carId);
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public int getId() {
         return id;
     }

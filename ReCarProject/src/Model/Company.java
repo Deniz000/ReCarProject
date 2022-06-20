@@ -62,7 +62,7 @@ public class Company {
     }
 
     public int getCityId() {
-        return cityId;
+        return cityId + 1;
     }
 
     public void setCityId(int cityId) {
@@ -209,6 +209,19 @@ public class Company {
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,selectedId);
+            deleteCars(selectedId);
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    public static boolean deleteCars(int id){
+        String sql = "delete from car where firm_id = ?";
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,id);
+            Helper.showMsg("done");
             return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();

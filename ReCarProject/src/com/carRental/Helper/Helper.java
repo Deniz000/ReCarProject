@@ -72,6 +72,9 @@ public class Helper {
             case "sure":
                 msg = "Bu işlemi gerçekleştirmek istediğine emin misiniz?";
                 break;
+            case "deleteAnyway":
+                msg = "Bu işlemi gerçekleştirmek istediğine emin misiniz?\n" + " Firmaya ait tüm araçlar silinecek!" ;
+                break;
             default:
                 msg = str;
                 break;

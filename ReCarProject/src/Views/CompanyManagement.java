@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CompanyManagement extends JFrame {
     private JPanel wrapper;
@@ -19,7 +21,6 @@ public class CompanyManagement extends JFrame {
     private JTextField txtMail1;
     private JTextField txtPassword1;
     private JButton btUpdate;
-    private JTextField txtCarType;
     private JTextField txtPrice;
     private JButton ekleButton;
     private JTextField txtDeletedCar;
@@ -33,6 +34,8 @@ public class CompanyManagement extends JFrame {
     private JButton hesabıSilButton;
     private JTable tbl_rentalList;
     private JButton çıkışYapButton;
+    private JComboBox cmbCarType;
+    private JLabel lblWelcome;
 
     //sortCar() 'dan ulaşabilmek için
     private DefaultTableModel mdl_carList;
@@ -52,6 +55,7 @@ public class CompanyManagement extends JFrame {
         setResizable(false);
         setTitle(Config.PROJECT_TİTLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        lblWelcome.setText("Hoşgeldiniz " + this.company.getUsername());
         comboSortCity();
         txtCompanyName.setText(this.company.getUsername());
         txtPassword.setText(this.company.getPassword());
@@ -68,7 +72,15 @@ public class CompanyManagement extends JFrame {
         mdl_carList.setColumnIdentifiers(col_carList);
         tbtlCarList.setModel(mdl_carList);
         tbtlCarList.getTableHeader().setReorderingAllowed(false);
-
+        tbtlCarList.getSelectionModel().addListSelectionListener(e->{
+            try {
+                String selectedItemId = tbtlCarList.getValueAt(tbtlCarList.getSelectedRow(),0).toString();
+                txtDeletedCar.setText(selectedItemId);
+            }
+            catch (Exception exception){
+                System.out.println(exception.getMessage());
+            }
+        });
         //yeni üyelik oluşturunca, yeni firmaya ait araç olmadığından sortCar() metoodu hata verdiği için bu şekilde yaptım
         try {
             sortCar();
@@ -78,17 +90,18 @@ public class CompanyManagement extends JFrame {
 
         // ilişisel işlemler gerçekleştirilecek
         hesabıSilButton.addActionListener(e -> {
-            if(Helper.confirm("sure")){
+            if(Helper.confirm("deleteAnyway")){
                 int selectedId = this.company.getId();
                 if(Company.delete(selectedId)){
-                    Helper.showMsg("succed");
+                    Helper.showMsg("done");
                     dispose();
                     Helper.login.setVisible(true);
                 }
 
             }
         });
-        // tüm kodlar tam ama çalışmıyor
+
+        // tüm kodlar tam ama çalışmıyor --------------------------------------------------------------------------------!!!!!
         btUpdate.addActionListener(e -> {
             String name = txtCompanyName.getText();
             int cityId = cmbCity.getSelectedIndex() +1;
@@ -112,6 +125,41 @@ public class CompanyManagement extends JFrame {
             dispose();
             Helper.login.setVisible(true);
         });
+        comboSortCar();
+        ekleButton.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txtPrice)){
+                Helper.showMsg("fill");
+            }else {
+                int typeId = cmbCarType.getSelectedIndex() + 1;
+                int price = Integer.parseInt(txtPrice.getText());
+                if(Car.add(price,this.company.getCityId(),true, this.company.getId(), typeId)){
+                    Helper.showMsg("done");
+                    sortCar();
+                }
+                else{
+                    Helper.showMsg("error");
+                }
+            }
+        });
+
+        silButton.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txtDeletedCar)){
+                Helper.showMsg("fill");
+            }else{
+                if(Helper.confirm("sure")){
+                    int carId = Integer.parseInt(txtDeletedCar.getText());
+                    if(Car.deleteById(carId)){
+                        Helper.showMsg("done");
+                        sortCar();
+                        txtDeletedCar.setText("");
+                        return;
+                    } else{
+                        System.out.println("Üzgünüz. Bir aksilik oldu!");
+                        return;
+                    }
+                }
+            }
+        });
     }
 
     //firmaya ait araçlar listeleniyor
@@ -130,6 +178,13 @@ public class CompanyManagement extends JFrame {
         cmbCity.removeAllItems();
         for (City city : City.getList()) {
             cmbCity.addItem(new Item(city.getId(), city.getName()).getValue());
+        }
+    }
+
+    public  void comboSortCar(){
+        cmbCarType.removeAllItems();
+        for (CarType carType : CarType.getList()) {
+            cmbCarType.addItem(new Item(carType.getId(), carType.getName()).getValue());
         }
     }
     public void sortRental(){

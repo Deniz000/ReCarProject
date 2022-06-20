@@ -8,10 +8,7 @@ import com.carRental.Helper.Item;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class UserManagement extends JFrame{
     private JPanel wrapper;
@@ -36,14 +33,11 @@ public class UserManagement extends JFrame{
     private JTextField txtMaxPrice;
     private JButton btnTemizle;
     private JButton çıkışYapButton;
-    private JComboBox cmbEndDay;
-    private JComboBox cmdEndMounth;
-    private JTextField txtEndYear;
     private JLabel lbl_Firm;
-    private JButton btnListele;
-    private JTextField txtStartYear;
-    private JComboBox cmbStartMounth;
-    private JComboBox cmbStartDay;
+    private JButton KİRALAButton;
+    private JComboBox comboBox1;
+    private JComboBox comboBox2;
+    private JButton LİSTELEButton;
     private DefaultTableModel mdl_userCarlist;
     private DefaultTableModel mdl_rentedCarList;
 
@@ -136,10 +130,6 @@ public class UserManagement extends JFrame{
             }
         });
 
-        // tıklanan aracın rezerve değilse kiralanması
-        kiralaButton.addActionListener(e -> {
-
-        });
 
 
         // filtreyi kaldırır, tüm araçlar listelenir
@@ -150,26 +140,26 @@ public class UserManagement extends JFrame{
         });
 
         // tamamlanmadı. Tarihe göre listelenecek.
-        btnListele.addActionListener(e -> {
-            int sDay = cmbStartDay.getSelectedIndex() + 1; // 0 dan başladığı için + 1
-            int sMounth = cmbStartMounth.getSelectedIndex() + 1;
-            int sYear = Integer.parseInt(txtStartYear.getText());
-
-            int eDay = cmbEndDay.getSelectedIndex() + 1;
-            int eMounth = cmdEndMounth.getSelectedIndex() + 1;
-            int eYear = Integer.parseInt(txtEndYear.getText());
-
-            //string i date e çeviriyor
-            LocalDate sDate = LocalDate.of(eYear,eMounth,eDay);
-            LocalDate eDate = LocalDate.of(eYear,eMounth,eDay);
-
-            Date startDate = Rental.startDateControl(this.user.getId()).get(0);
-            Date endDate = Rental.endDateControl(this.user.getId()).get(0);
-        });
-
-        kiralaButton.addActionListener(e -> {
-
-        });
+    //    btnListele.addActionListener(e -> {
+    //        int sDay = cmbStartDay.getSelectedIndex() + 1; // 0 dan başladığı için + 1
+    //        int sMounth = cmbStartMounth.getSelectedIndex() + 1;
+    //        int sYear = Integer.parseInt(txtStartYear.getText());
+//
+     //       int eDay = cmbEndDay.getSelectedIndex() + 1;
+    //        int eMounth = cmdEndMounth.getSelectedIndex() + 1;
+    //        int eYear = Integer.parseInt(txtEndYear.getText());
+//
+    //        //string i date e çeviriyor
+    //        LocalDate sDate = LocalDate.of(eYear,eMounth,eDay);
+    //        LocalDate eDate = LocalDate.of(eYear,eMounth,eDay);
+//
+    //        Date startDate = Rental.startDateControl(this.user.getId()).get(0);
+    //        Date endDate = Rental.endDateControl(this.user.getId()).get(0);
+    //    });
+//
+    //    kiralaButton.addActionListener(e -> {
+//
+    //    });
 
     }
 
