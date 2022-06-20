@@ -8,11 +8,18 @@ import com.carRental.Helper.Item;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Objects;
+
+import static java.time.LocalDate.of;
 
 public class UserManagement extends JFrame{
     private JPanel wrapper;
     private User user;
+    private Calendar calendar = Calendar.getInstance();
+    private int thisYear = calendar.get(Calendar.YEAR);
     private JButton araButton;
     private JComboBox cmb_city;
     private JComboBox cmb_carType;
@@ -34,10 +41,15 @@ public class UserManagement extends JFrame{
     private JButton btnTemizle;
     private JButton çıkışYapButton;
     private JLabel lbl_Firm;
-    private JButton KİRALAButton;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JButton LİSTELEButton;
+    private JComboBox cmbStartDay;
+    private JComboBox cmbStartMounth;
+    private JButton btnList;
+    private JComboBox cmbEndDay;
+    private JComboBox cmdEndMounth;
+    private JButton btnRent;
+    private JLabel lblCarId;
+    private JComboBox cmbStartYear;
+    private JComboBox cmbEndYear;
     private DefaultTableModel mdl_userCarlist;
     private DefaultTableModel mdl_rentedCarList;
 
@@ -81,24 +93,22 @@ public class UserManagement extends JFrame{
 
         // şehir ve araç tipine göre tabloda listelenecek araçların filtrelenmesi
         araButton.addActionListener(e -> {
-                //String city = cmb_city.getSelectedItem().toString();
-                int cityId = cmb_city.getSelectedIndex() + 1;
-                int carType = cmb_carType.getSelectedIndex() + 1;
-                int maxPrice = Integer.parseInt(txtMaxPrice.getText());
-                boolean isSelect = false;
-                if(radioBtnAvailable.isSelected()){
-                    isSelect = true;
-                }
-                else{
-                    isSelect = false;
-                }
-                String sql = null;
-                if(maxPrice==0){
-                    sortCars(Car.sortFilter(cityId,carType,isSelect));
-                }
-                else {
-                    sortCars(Car.sortFilterForPrice(cityId, carType,maxPrice,isSelect));
-                }
+            //String city = cmb_city.getSelectedItem().toString();
+            int cityId = cmb_city.getSelectedIndex() + 1;
+            int carType = cmb_carType.getSelectedIndex() + 1;
+            int maxPrice = Integer.parseInt(txtMaxPrice.getText());
+            boolean isSelect = false;
+            if (radioBtnAvailable.isSelected()) {
+                isSelect = true;
+            } else {
+                isSelect = false;
+            }
+            String sql = null;
+            if (maxPrice == 0) {
+                sortCars(Car.sortFilter(cityId, carType, isSelect));
+            } else {
+                sortCars(Car.sortFilterForPrice(cityId, carType, maxPrice, isSelect));
+            }
         });
 
 
@@ -123,46 +133,24 @@ public class UserManagement extends JFrame{
                 super.mouseClicked(e);
                 DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
                 int seciliRow = tbl_carList.getSelectedRow();
+                lblCarId.setText(String.valueOf((int) model.getValueAt(seciliRow,0)));
                 lbl_city.setText((String) model.getValueAt(seciliRow, 1));
                 lbl_carType.setText((String) model.getValueAt(seciliRow, 2));
-                lbl_price.setText(String.valueOf(model.getValueAt(seciliRow, 4)));
-                lbl_Firm.setText((String) model.getValueAt(seciliRow,5));
+                lbl_price.setText(String.valueOf(model.getValueAt(seciliRow, 4)) + " TL");
+                lbl_Firm.setText((String) model.getValueAt(seciliRow, 5) + " A.Ş");
             }
         });
 
 
-
         // filtreyi kaldırır, tüm araçlar listelenir
         btnTemizle.addActionListener(e -> sortCars());
+
         çıkışYapButton.addActionListener(e -> {
             dispose();
             Helper.login.setVisible(true);
         });
 
-        // tamamlanmadı. Tarihe göre listelenecek.
-    //    btnListele.addActionListener(e -> {
-    //        int sDay = cmbStartDay.getSelectedIndex() + 1; // 0 dan başladığı için + 1
-    //        int sMounth = cmbStartMounth.getSelectedIndex() + 1;
-    //        int sYear = Integer.parseInt(txtStartYear.getText());
-//
-     //       int eDay = cmbEndDay.getSelectedIndex() + 1;
-    //        int eMounth = cmdEndMounth.getSelectedIndex() + 1;
-    //        int eYear = Integer.parseInt(txtEndYear.getText());
-//
-    //        //string i date e çeviriyor
-    //        LocalDate sDate = LocalDate.of(eYear,eMounth,eDay);
-    //        LocalDate eDate = LocalDate.of(eYear,eMounth,eDay);
-//
-    //        Date startDate = Rental.startDateControl(this.user.getId()).get(0);
-    //        Date endDate = Rental.endDateControl(this.user.getId()).get(0);
-    //    });
-//
-    //    kiralaButton.addActionListener(e -> {
-//
-    //    });
-
     }
-
     //combobox ın içini doldurmak için
     public  void comboSortCity(){
         cmb_city.removeAllItems();
@@ -209,6 +197,7 @@ public class UserManagement extends JFrame{
         }
     }
 
+    //rezervasyon tablasu
     public void sortRentCar(){
         DefaultTableModel tableModel = (DefaultTableModel) tbl_rentedCarList.getModel();
         tableModel.setRowCount(0);

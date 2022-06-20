@@ -1,6 +1,7 @@
 package Model;
 
 import com.carRental.Helper.DbConnector;
+import com.carRental.Helper.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +50,12 @@ public class Car {
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,carId);
+            if(Rental.deleteByCarId(carId)){
+                Helper.showMsg("Araca ait tüm rezervasyonlar silindi");
+            }
+            else{
+                Helper.showMsg("error");
+            }
             return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,6 +63,18 @@ public class Car {
         return true;
     }
 
+    public static boolean deleteByFirm(int id){
+        String sql = "delete from car where firm_id = ?";
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,id);
+            Helper.showMsg("done");
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
     public int getId() {
         return id;
     }
@@ -135,6 +154,28 @@ public class Car {
         return carList;
     }
 
+    //firmalara ait araçları listeler
+    public static ArrayList<Car> getList(int id){
+        String sql = "select * from car where firm_id = ?";
+        ArrayList<Car> cars = new ArrayList<>();
+        Car car;
+        try {
+            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1,id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getInt("car_type_id"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
+                cars.add(car);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cars;
+    }
+
+
+
     public static String getFetch(int id){
         String query= "select name from car  \n" +
                 "inner join cartype\n" +
@@ -173,7 +214,7 @@ public class Car {
     }
 
 
-    //fiyat bilgisiiçin sorgu
+    //fiyat bilgisi girilmişse çalışacak sorgu
     public static ArrayList<Car> sortFilterForPrice(int cityId, int carType, int maxPrice, boolean isSelect) {
         ArrayList<Car> cars = new ArrayList<>();
         Car car =null;

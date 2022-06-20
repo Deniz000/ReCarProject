@@ -5,6 +5,8 @@ import com.carRental.Helper.DbConnector;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -80,6 +82,7 @@ public class Rental {
         this.returnDate = returnDate;
     }
 
+    // id 'si verilen firmanın rezervasyon işlemlerini listeler
     public static ArrayList<Rental> getListForCompany(int id){
         ArrayList<Rental> rentals = new ArrayList<>();
         String sql = "select * from rentals where firm_id = ?";
@@ -102,6 +105,8 @@ public class Rental {
         }
         return rentals;
     }
+
+    // id 'si verilen kullanıcının rezervasyon işlemlerini listeler
     public static ArrayList<Rental> getListForUser(int id){
         ArrayList<Rental> rentals = new ArrayList<>();
         String sql = "select * from rentals where user_id = ?";
@@ -125,43 +130,29 @@ public class Rental {
         return rentals;
     }
 
-
-    public static ArrayList<Date> startDateControl(int id){
-        String sql = "select * from rentals where id = ?";
-        ArrayList<Date> dates = new ArrayList<>();
-        Rental rental = null;
+    // Firmalar araç ekleme silme yapabiliyordu, bi aracı sildiği zaman foreign key durumundan dolayı aracın rezervasyon listesi de siliniyor
+    public static boolean deleteByCarId(int id){
+        String sql = "delete from rentals where car_id = ?";
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                rental = new Rental();
-                rental.setRentDate(rs.getDate("rent_date"));
-                dates.add(rental.rentDate);
-            }
+            return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return dates;
+        return true;
     }
 
-    public static ArrayList<Date> endDateControl(int id){
-        String sql = "select * from rentals where id = ?";
-        ArrayList<Date> dates = new ArrayList<>();
-        Rental rental = null;
+    //Firma hesabını sildiğinde kendisine ait rezervasyon listesi de siliniyor
+    public static boolean deleteByFirmId(int id){
+        String sql = "delete from rentals where firm_id = ?";
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                rental = new Rental();
-                rental.setReturnDate(rs.getDate("return_date"));
-                dates.add(rental.returnDate);
-            }
+            return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return dates;
+        return true;
     }
-
 }

@@ -57,6 +57,7 @@ public class User {
 
 
 
+    //id 'si verilen kullanıcın adını verir
     public static String getFetch(int id){
         String query="SELECT * FROM users WHERE id = ?";
         String name = null;

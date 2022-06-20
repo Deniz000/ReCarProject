@@ -36,6 +36,7 @@ public class City {
         this.name = name;
     }
 
+    //şehirleri listeler
     public static ArrayList<City> getList(){
         ArrayList<City> cities = new ArrayList<>();
         City city = null;
@@ -55,20 +56,22 @@ public class City {
         return cities;
     }
 
+    // id si verilen şehrin adı
     public static String getFetch(int id){
         String sql = "select name from cities where id = ?";
-        String city = null;
+        String name = null;
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                city  =rs.getString("name");
+                name  =rs.getString("name");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return city;
+        return name;
     }
+
 }

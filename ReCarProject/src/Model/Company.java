@@ -69,47 +69,7 @@ public class Company {
         this.cityId = cityId;
     }
 
-    //firmaları listeler
-    public static ArrayList<Company> getList(){
-        ArrayList<Company> companies = new ArrayList<>();
-        String sql = "select - from company";
-        Company company = null;
-        try {
-            Statement statement = DbConnector.getInstance().createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()){
-                company = new Company();
-                company.setId(rs.getInt("id"));
-                company.setUsername(rs.getString("companyname"));
-                companies.add(company);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return companies;
-    }
-
-    //firmalara ait araçları listeler
-    public static ArrayList<Car> getList(int id){
-        String sql = "select * from car where firm_id = ?";
-        ArrayList<Car> cars = new ArrayList<>();
-        Car car;
-        try {
-            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
-            preparedStatement.setInt(1,id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                car = new Car(rs.getInt("id"),rs.getInt("city_id"),rs.getInt("car_type_id"),rs.getBoolean("available"), rs.getInt("price"), rs.getInt("firm_id"));
-                cars.add(car);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return cars;
-    }
-
-
+    // id'si verilen firmanın adını döndürür
     public static String getFetch(int id){
         String name = null;
         String query="SELECT companyname FROM company WHERE id =?";
@@ -127,6 +87,7 @@ public class Company {
     }
 
 
+    // adı verilen firmanın id'sini döndürür
     public static int getFetch(String username){
         int id = 0;
         String query="SELECT id FROM company WHERE companyname = ?";
@@ -145,7 +106,7 @@ public class Company {
 
     public static Company getFetch(String username,String password){
         Company obj=null;
-        String query="SELECT * FROM company WHERE companyname =? AND password=?";
+        String query="SELECT * FROM company WHERE companyname = ? AND password=?";
 
         try {
             PreparedStatement pr = DbConnector.getInstance().prepareStatement(query);
@@ -203,25 +164,15 @@ public class Company {
         return false;
     }
 
+    //id 'ye göre firmayı siler
     public static boolean delete(int selectedId) {
         String sql = "delete from company where id = ?";
 
         try {
             PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
             preparedStatement.setInt(1,selectedId);
-            deleteCars(selectedId);
-            return preparedStatement.executeUpdate() != -1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-    public static boolean deleteCars(int id){
-        String sql = "delete from car where firm_id = ?";
-        try {
-            PreparedStatement preparedStatement = DbConnector.getInstance().prepareStatement(sql);
-            preparedStatement.setInt(1,id);
-            Helper.showMsg("done");
+            Car.deleteByFirm(selectedId);
+            Rental.deleteByFirmId(selectedId);
             return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             e.printStackTrace();

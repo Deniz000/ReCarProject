@@ -51,6 +51,7 @@ public class CarType {
         }
         return name;
     }
+    // araç tiplerini listeler
     public static ArrayList<CarType> getList(){
         ArrayList<CarType> carTypes = new ArrayList<>();
         CarType carType;
