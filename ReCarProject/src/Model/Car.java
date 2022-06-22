@@ -17,6 +17,7 @@ public class Car {
     private boolean available;
     private int price;
     private int firmId;
+
     public Car() {
 
     }
@@ -111,6 +112,9 @@ public class Car {
     public void setAvailable(boolean available) {
         this.available = available;
     }
+    public boolean getAvailable() {
+        return this.available;
+    }
 
     public int getPrice() {
         return price;
@@ -174,7 +178,27 @@ public class Car {
         return cars;
     }
 
+    public static boolean update(Car u,boolean available,int id){
+        String query="UPDATE car SET available = ? WHERE id = ?";
 
+        try {
+            PreparedStatement pr=DbConnector.getInstance().prepareStatement(query);
+            pr.setBoolean(1,available);
+            pr.setInt(2,u.getId());
+
+            int response= pr.executeUpdate();
+
+            if(response == -1){
+                Helper.showMsg("error");
+            }
+            return response != -1;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return true;
+    }
 
     public static String getFetch(int id){
         String query= "select name from car  \n" +

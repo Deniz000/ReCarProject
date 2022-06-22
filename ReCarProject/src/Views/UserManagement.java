@@ -8,10 +8,8 @@ import com.carRental.Helper.Item;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 
 import static java.time.LocalDate.of;
 
@@ -45,7 +43,7 @@ public class UserManagement extends JFrame{
     private JComboBox cmbStartMounth;
     private JButton btnList;
     private JComboBox cmbEndDay;
-    private JComboBox cmdEndMounth;
+    private JComboBox cmbEndMounth;
     private JButton btnRent;
     private JLabel lblCarId;
     private JComboBox cmbStartYear;
@@ -133,11 +131,15 @@ public class UserManagement extends JFrame{
                 super.mouseClicked(e);
                 DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
                 int seciliRow = tbl_carList.getSelectedRow();
+
+
                 lblCarId.setText(String.valueOf((int) model.getValueAt(seciliRow,0)));
                 lbl_city.setText((String) model.getValueAt(seciliRow, 1));
                 lbl_carType.setText((String) model.getValueAt(seciliRow, 2));
                 lbl_price.setText(String.valueOf(model.getValueAt(seciliRow, 4)) + " TL");
                 lbl_Firm.setText((String) model.getValueAt(seciliRow, 5) + " A.Ş");
+
+
             }
         });
 
@@ -150,6 +152,39 @@ public class UserManagement extends JFrame{
             Helper.login.setVisible(true);
         });
 
+        // araç kiralama
+        btnRent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) tbl_carList.getModel();
+                int seciliRow = tbl_carList.getSelectedRow();
+
+                Car car = Car.getList().get((Integer) model.getValueAt(seciliRow,0)-1);
+                System.out.println(car.getId());
+                System.out.println(car.isAvailable());
+                if(car.isAvailable() == "Müsait"){
+
+                    Rental.add(car.getId(),user.getId(),dateFix()[0],dateFix()[1],car.getFirmId());
+                    car.setAvailable(false);
+                    model.setValueAt(car.isAvailable(),seciliRow,3);
+                    Car.update(car,car.getAvailable(),car.getId());
+                    sortRentCar();
+                }else{
+                    Helper.showMsg("Araç Rezerve Edilmiş");
+                }
+
+
+
+            }
+        });
+    }
+
+    public String[] dateFix(){
+        String[] array = new String[2];
+        array[0]= "2022-"+String.valueOf(cmbStartMounth.getSelectedItem()) +"-"+String.valueOf(cmbStartDay.getSelectedItem());
+        array[1]= "2022-"+String.valueOf(cmbEndMounth.getSelectedItem()) +"-"+String.valueOf(cmbEndDay.getSelectedItem());
+
+        return array;
     }
     //combobox ın içini doldurmak için
     public  void comboSortCity(){

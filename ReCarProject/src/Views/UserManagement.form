@@ -196,7 +196,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <grid id="7745c" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                          <grid id="7745c" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                             <margin top="5" left="5" bottom="5" right="5"/>
                             <constraints>
                               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="4" fill="2" indent="0" use-parent-layout="false"/>
@@ -359,7 +359,7 @@
                                       </model>
                                     </properties>
                                   </component>
-                                  <component id="9c66c" class="javax.swing.JComboBox" binding="cmdEndMounth">
+                                  <component id="9c66c" class="javax.swing.JComboBox" binding="cmbEndMounth">
                                     <constraints>
                                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                                     </constraints>
@@ -406,6 +406,11 @@
                                   <text value="KİRALA"/>
                                 </properties>
                               </component>
+                              <hspacer id="706bd">
+                                <constraints>
+                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                              </hspacer>
                             </children>
                           </grid>
                           <grid id="a4c58" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

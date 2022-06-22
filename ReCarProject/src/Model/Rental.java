@@ -1,6 +1,7 @@
 package Model;
 
 import com.carRental.Helper.DbConnector;
+import com.carRental.Helper.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,8 +16,8 @@ public class Rental {
     private int carId;
     private int userId;
     private int firmId;
-    private Date rentDate;
-    private Date returnDate;
+    private static Date rentDate;
+    private static Date returnDate;
 
     private Car car;
     private User user;
@@ -67,7 +68,7 @@ public class Rental {
     }
 
     public Date getRentDate() {
-        return rentDate;
+        return this.rentDate;
     }
 
     public void setRentDate(Date rentDate) {
@@ -75,7 +76,7 @@ public class Rental {
     }
 
     public Date getReturnDate() {
-        return returnDate;
+        return this.returnDate;
     }
 
     public void setReturnDate(Date returnDate) {
@@ -104,6 +105,31 @@ public class Rental {
             e.printStackTrace();
         }
         return rentals;
+    }
+
+
+    public static boolean add(int car_id,int user_id,String rent_date,String return_date ,int firm_id){
+        String query="INSERT INTO rentals (car_id,user_id,rent_date,return_date,firm_id) VALUES (?,?,?,?,?)";
+
+        try {
+            PreparedStatement pr=DbConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,car_id);
+            pr.setInt(2,user_id);
+            pr.setString(3,rent_date);
+            pr.setString(4,return_date);
+            pr.setInt(5,firm_id);
+            int response= pr.executeUpdate();
+
+            if(response == -1){
+                Helper.showMsg("error");
+            }
+            return response != -1;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return true;
     }
 
     // id 'si verilen kullanıcının rezervasyon işlemlerini listeler
