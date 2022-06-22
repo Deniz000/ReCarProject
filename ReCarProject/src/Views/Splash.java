@@ -16,6 +16,7 @@ public class Splash extends JFrame {
         // Temayı Nimbus Olarak Değiştirdik
         Helper.changeUINimbus();
         add(wrapper);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600,400);
         setLocationRelativeTo(null);
         setResizable(false);

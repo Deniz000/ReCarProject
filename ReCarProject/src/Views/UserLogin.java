@@ -26,56 +26,45 @@ public class UserLogin extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // ana login ekranına dönüş
-        btn_return.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                Helper.login.setVisible(true);
-            }
+        btn_return.addActionListener(e -> {
+            setVisible(false);
+            Helper.login.setVisible(true);
         });
 
         // giriş yapma
-        btn_girisYap.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Helper.isFieldEmpty(txt_kullaniciAdi) || Helper.isFieldEmpty(psw_parola)){
-                    Helper.showMsg("fill");
+        btn_girisYap.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txt_kullaniciAdi) || Helper.isFieldEmpty(psw_parola)){
+                Helper.showMsg("fill");
+            }else{
+                User u = User.getFetch(txt_kullaniciAdi.getText(),psw_parola.getText());
+                if(u ==null){
+                    Helper.showMsg("Kullanıcı Bulunamadı !");
                 }else{
-                    User u = User.getFetch(txt_kullaniciAdi.getText(),psw_parola.getText());
-                    if(u ==null){
-                        Helper.showMsg("Kullanıcı Bulunamadı !");
-                    }else{
-                        Helper.login.dispose();
-
-                        // giriş doğruysa user giriş ekranı üretme
-                        UserManagement userManagement = new UserManagement(u);
-                        userManagement.setVisible(true);
-                        dispose();
-                    }
+                    Helper.login.dispose(); //?
+                    // giriş doğruysa user giriş ekranı üretme
+                    Helper.registerUser = new UserManagement(u);
+                    Helper.registerUser.setVisible(true);
                 }
             }
         });
 
         // kullanıcı için yeni üyelik
-        btn_uyelikOlustur.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Helper.isFieldEmpty(txt_kullaniciAdi) || Helper.isFieldEmpty(psw_parola)){
-                    Helper.showMsg("fill");
+        btn_uyelikOlustur.addActionListener(e -> {
+            if(Helper.isFieldEmpty(txt_kullaniciAdi) || Helper.isFieldEmpty(psw_parola)){
+                Helper.showMsg("fill");
+            }else{
+                User u = User.getFetch(txt_kullaniciAdi.getText(),psw_parola.getText());
+                if(u != null){
+                    Helper.showMsg("Üyelik Zaten Mevcut !");
                 }else{
-                    User u = User.getFetch(txt_kullaniciAdi.getText(),psw_parola.getText());
-                    if(u != null){
-                        Helper.showMsg("Üyelik Zaten Mevcut !");
-                    }else{
 
-                        if(User.add(txt_kullaniciAdi.getText(),psw_parola.getText()) == true){
-                            Helper.showMsg("Üyelik Başarılı");
-                        }
+                    if(User.add(txt_kullaniciAdi.getText(), psw_parola.getText())){
+                        Helper.showMsg("Üyelik Başarılı. Giriş yapmak için sekmeyi \n kapatıp GİRİŞ YAP butonuna tıklayınız");
 
                     }
                 }
-
             }
+
         });
     }
 }
